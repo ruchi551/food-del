@@ -1,5 +1,5 @@
 .navbar {
-  padding: 16px 0;
+  padding: 16px 8%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -9,6 +9,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+   width: 100vw;           /* full width */
+  margin-left: calc(-50vw + 50%); 
 }
 
 .navbar-brand {

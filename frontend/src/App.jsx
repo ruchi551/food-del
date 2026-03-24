@@ -12,15 +12,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify/Verify'
 
 const App = () => {
-
-  const [showLogin,setShowLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   return (
     <>
-    <ToastContainer/>
-    {showLogin?<LoginPopup setShowLogin={setShowLogin}/>:<></>}
+      <ToastContainer/>
+      {showLogin && <LoginPopup setShowLogin={setShowLogin}/>}
+      <Navbar setShowLogin={setShowLogin}/>
       <div className='app'>
-        <Navbar setShowLogin={setShowLogin}/>
         <Routes>
           <Route path='/' element={<Home />}/>
           <Route path='/cart' element={<Cart />}/>

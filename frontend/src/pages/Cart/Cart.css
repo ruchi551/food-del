@@ -1,5 +1,6 @@
 .cart {
-    margin: 100px 0px;
+    margin: 100px auto;
+    padding: 0 20px;
 }
 
 .cart hr {
