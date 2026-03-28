@@ -7,13 +7,18 @@ import { StoreContext } from '../../Context/StoreContext'
 const Navbar = ({ setShowLogin }) => {
 
   const [menu, setMenu] = useState("home");
-  const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
+  const { getTotalCartAmount, token, setToken, showSearch, setShowSearch, setSearch } = useContext(StoreContext); // ✅ added
   const navigate = useNavigate();
 
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     navigate('/')
+  }
+
+  const toggleSearch = () => {         // ✅ added
+    setShowSearch(prev => !prev);
+    setSearch('');
   }
 
   return (
@@ -26,7 +31,13 @@ const Navbar = ({ setShowLogin }) => {
         <a href='#footer' onClick={() => setMenu("contact")} className={`${menu === "contact" ? "active" : ""}`}>contact us</a>
       </ul>
       <div className="navbar-right">
-        <img src={assets.search_icon} alt="" />
+        <img
+          src={assets.search_icon}
+          onClick={toggleSearch}                          // ✅ added
+          className={showSearch ? 'active' : ''}         // ✅ added
+          style={{ cursor: 'pointer' }}                  // ✅ added
+          alt=""
+        />
         <Link to='/cart' className='navbar-search-icon'>
           <img src={assets.basket_icon} alt="" />
           <div className={getTotalCartAmount() > 0 ? "dot" : ""}></div>

@@ -21,7 +21,7 @@ const PlaceOrder = () => {
         phone: ""
     })
 
-    const { getTotalCartAmount, token, food_list, cartItems, url, setCartItems,currency,deliveryCharge } = useContext(StoreContext);
+    const { getTotalCartAmount, token, food_list, cartItems, url, setCartItems, currency, deliveryCharge } = useContext(StoreContext);
 
     const navigate = useNavigate();
 
@@ -47,35 +47,43 @@ const PlaceOrder = () => {
             amount: getTotalCartAmount() + deliveryCharge,
         }
         if (payment === "stripe") {
-            let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
-            if (response.data.success) {
-                const { session_url } = response.data;
-                window.location.replace(session_url);
+            try {                                                                          // ✅ added
+                let response = await axios.post(url + "/api/order/place", orderData, { headers: { token } });
+                console.log("Stripe response:", response.data);                           // ✅ added
+                if (response.data.success) {
+                    const { session_url } = response.data;
+                    window.location.replace(session_url);
+                } else {
+                    console.log("Error message:", response.data.message);                 // ✅ added
+                    toast.error("Something Went Wrong: " + response.data.message)         // ✅ added
+                }
+            } catch (error) {
+                console.log("Axios error:", error.response?.data || error.message);       // ✅ added
+                toast.error("Request failed: " + error.message)                          // ✅ added
             }
-            else {
-                toast.error("Something Went Wrong")
+        } else {
+            try {                                                                          // ✅ added
+                let response = await axios.post(url + "/api/order/placecod", orderData, { headers: { token } });
+                console.log("COD response:", response.data);                              // ✅ added
+                if (response.data.success) {
+                    navigate("/myorders")
+                    toast.success(response.data.message)
+                    setCartItems({});
+                } else {
+                    toast.error("Something Went Wrong")
+                }
+            } catch (error) {
+                console.log("COD error:", error.response?.data || error.message);         // ✅ added
+                toast.error("Request failed: " + error.message)
             }
         }
-        else{
-            let response = await axios.post(url + "/api/order/placecod", orderData, { headers: { token } });
-            if (response.data.success) {
-                navigate("/myorders")
-                toast.success(response.data.message)
-                setCartItems({});
-            }
-            else {
-                toast.error("Something Went Wrong")
-            }
-        }
-
     }
 
     useEffect(() => {
         if (!token) {
             toast.error("to place an order sign in first")
             navigate('/cart')
-        }
-        else if (getTotalCartAmount() === 0) {
+        } else if (getTotalCartAmount() === 0) {
             navigate('/cart')
         }
     }, [token])
@@ -122,7 +130,7 @@ const PlaceOrder = () => {
                         <p>Stripe ( Credit / Debit )</p>
                     </div>
                 </div>
-                <button className='place-order-submit' type='submit'>{payment==="cod"?"Place Order":"Proceed To Payment"}</button>
+                <button className='place-order-submit' type='submit'>{payment === "cod" ? "Place Order" : "Proceed To Payment"}</button>
             </div>
         </form>
     )

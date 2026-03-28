@@ -1,6 +1,9 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js"
 import Stripe from "stripe";
+
+console.log("Stripe Key:", process.env.STRIPE_SECRET_KEY); // ✅ debug line
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 //config variables
@@ -10,7 +13,6 @@ const frontend_URL = 'http://localhost:5173';
 
 // Placing User Order for Frontend using stripe
 const placeOrder = async (req, res) => {
-
     try {
         const newOrder = new orderModel({
             userId: req.body.userId,
@@ -27,7 +29,7 @@ const placeOrder = async (req, res) => {
                 product_data: {
                     name: item.name
                 },
-                unit_amount: item.price * 100 
+                unit_amount: item.price * 100
             },
             quantity: item.quantity
         }))
@@ -58,9 +60,8 @@ const placeOrder = async (req, res) => {
     }
 }
 
-// Placing User Order for Frontend using stripe
+// Placing User Order for Frontend using COD
 const placeOrderCod = async (req, res) => {
-
     try {
         const newOrder = new orderModel({
             userId: req.body.userId,
@@ -80,7 +81,7 @@ const placeOrderCod = async (req, res) => {
     }
 }
 
-// Listing Order for Admin panel
+// Listing Orders for Admin panel
 const listOrders = async (req, res) => {
     try {
         const orders = await orderModel.find({});
@@ -110,7 +111,6 @@ const updateStatus = async (req, res) => {
     } catch (error) {
         res.json({ success: false, message: "Error" })
     }
-
 }
 
 const verifyOrder = async (req, res) => {
@@ -119,15 +119,13 @@ const verifyOrder = async (req, res) => {
         if (success === "true") {
             await orderModel.findByIdAndUpdate(orderId, { payment: true });
             res.json({ success: true, message: "Paid" })
-        }
-        else {
+        } else {
             await orderModel.findByIdAndDelete(orderId)
             res.json({ success: false, message: "Not Paid" })
         }
     } catch (error) {
-        res.json({ success: false, message: "Not  Verified" })
+        res.json({ success: false, message: "Not Verified" })
     }
-
 }
 
 export { placeOrder, listOrders, userOrders, updateStatus, verifyOrder, placeOrderCod }
