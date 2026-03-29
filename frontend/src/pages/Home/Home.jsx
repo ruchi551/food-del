@@ -7,15 +7,15 @@ import SearchBar from '../../components/SearchBar/SearchBar'
 
 const Home = () => {
 
-  const [category,setCategory] = useState("All")
+  const [category, setCategory] = useState("All")
 
   return (
     <>
-      <Header/>
-      <ExploreMenu setCategory={setCategory} category={category}/>
-      <SearchBar/>  {/* ✅ added */}
-      <FoodDisplay category={category}/>
-      <AppDownload/>
+      <Header />
+      <ExploreMenu setCategory={setCategory} category={category} />
+      <SearchBar />
+      <FoodDisplay category={category} />
+      <AppDownload />
     </>
   )
 }
