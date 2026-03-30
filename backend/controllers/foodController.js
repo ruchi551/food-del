@@ -1,5 +1,5 @@
 import foodModel from "../models/foodModel.js";
-import fs from 'fs'
+import cloudinary from '../cloudinary.js';
 
 // all food list
 const listFood = async (req, res) => {
@@ -10,21 +10,19 @@ const listFood = async (req, res) => {
         console.log(error);
         res.json({ success: false, message: "Error" })
     }
-
 }
 
 // add food
 const addFood = async (req, res) => {
-
     try {
-        let image_filename = `${req.file.filename}`
+        const image_url = req.file.path;
 
         const food = new foodModel({
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
-            category:req.body.category,
-            image: image_filename,
+            category: req.body.category,
+            image: image_url,
         })
 
         await food.save();
@@ -38,18 +36,20 @@ const addFood = async (req, res) => {
 // delete food
 const removeFood = async (req, res) => {
     try {
-
         const food = await foodModel.findById(req.body.id);
-        fs.unlink(`uploads/${food.image}`, () => { })
+        
+        // delete from cloudinary
+        if (food.image) {
+            const publicId = food.image.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(`cravato-foods/${publicId}`);
+        }
 
         await foodModel.findByIdAndDelete(req.body.id)
         res.json({ success: true, message: "Food Removed" })
-
     } catch (error) {
         console.log(error);
         res.json({ success: false, message: "Error" })
     }
-
 }
 
 export { listFood, addFood, removeFood }
